@@ -1,12 +1,17 @@
 import random
 import os
 from constants import *
+from password_data import PasswordData
 from password_generator import PasswordGenerator
+import json
 
 class Manager:
 
     password_generators = []
-    iterations = 0
+    password_data = []
+    total_iterations = 0
+    avg_iterations = 0
+    successful_cracks = 0
 
     def __init__(self) -> None:
         
@@ -16,6 +21,23 @@ class Manager:
 
             self.password_generators.append(PasswordGenerator())
 
+    def __repr__(self) -> str:
+        
+        msg = ''
+
+        msg += 'Meta results:'
+        msg += '\n'
+        msg += '   Simulations: {}'.format(password_tests)
+        msg += '\n'
+        msg += '   Avg iterations: {}'.format(self.avg_iterations)
+        msg += '\n'
+        msg += '   Password length: {}'.format(required_password_len)
+        msg += '\n'
+        msg += '   Success ratio: {} / {}'.format(self.successful_cracks, password_tests)
+        msg += '\n'
+
+        return msg
+
     def run(self):
 
         if os.path.exists(passwordsFilePath):
@@ -23,38 +45,37 @@ class Manager:
 
         self.passwordsFile = open('passwords.txt', 'w')
 
+        self.total_iterations = 0
+
         for password_generator in self.password_generators:
             password_generator.run()
-            self.passwordsFile.write(password_generator.passwords.to)
-            self.passwordsFile.write('\n')
 
-        self.passwordsFile.write('Generated passwords to find "{}": \n')
+            success = password_generator.iterations != max_password_amount
+
+            if success: self.successful_cracks += 1
+            self.total_iterations += password_generator.iterations
+
+            self.password_data.append(
+                PasswordData(
+                    password_generator.iterations,
+                    success,
+                    password_generator.target_password,
+                    password_generator.time,
+                )
+            )
+
+        self.avg_iterations = round(self.total_iterations / len(self.password_generators))
+
+        self.passwordsFile.write(repr(self))
+
+        self.passwordsFile.write('\n')
+        self.passwordsFile.write('Simulation results: \n')
+
+        for data in self.password_data:
+
+            self.passwordsFile.write(repr(data))
+            self.passwordsFile.write('\n')
 
         self.passwordsFile.close()
-
-    def generate_passwords(self) -> bool:
-
-        while self.iterations < self.max_password_amount:
-
-            self.iterations += 1
-
-            password = self.generate_password()
-            self.passwordsFile.write('\n')
-            self.passwordsFile.write(password)
-
-            if password == self.target_password:
-                return True
-        
-        return False
-    
-    
-    def generate_password(self):
-
-        password = ''
-        while len(password) < self.required_password_len:
-
-            password += random.choice(self.password_options)
-        
-        return password
 
 manager = Manager()
