@@ -47,10 +47,14 @@ class Manager:
 
         self.total_iterations = 0
 
+        i = 0
         for password_generator in self.password_generators:
+            i += 1
             password_generator.run()
 
             success = password_generator.iterations != max_password_amount
+
+            print('Finished simulation {} / {}, resulted in {}'.format(i, password_tests, "success" if success else "failure"))
 
             if success: self.successful_cracks += 1
             self.total_iterations += password_generator.iterations
