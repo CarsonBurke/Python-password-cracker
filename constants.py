@@ -1,7 +1,7 @@
 import string
 
 # How many password cracking simulations to run
-password_tests = 1000
+password_tests = 100
 # The length of the password to guess for
 required_password_len = 2
 # The max iterations a password crack attempt can take

@@ -12,6 +12,8 @@ class Manager:
     total_iterations = 0
     avg_iterations = 0
     successful_cracks = 0
+    fastest_iterations = float('inf')
+    slowest_iterations = 0
 
     def __init__(self) -> None:
         
@@ -35,6 +37,10 @@ class Manager:
         msg += '\n'
         msg += '   Success ratio: {} / {}'.format(self.successful_cracks, password_tests)
         msg += '\n'
+        msg += '   Fastest iterations: {}'.format(self.fastest_iterations)
+        msg += '\n'
+        msg += '   Slowest iterations: {}'.format(self.slowest_iterations)
+        msg += '\n'
 
         return msg
 
@@ -56,7 +62,15 @@ class Manager:
 
             print('Finished simulation {} / {}, resulted in {}'.format(i, password_tests, "success" if success else "failure"))
 
-            if success: self.successful_cracks += 1
+            if success: 
+                self.successful_cracks += 1
+
+                if password_generator.iterations < self.fastest_iterations:
+                    self.fastest_iterations = password_generator.iterations
+                    
+                if password_generator.iterations > self.slowest_iterations:
+                    self.slowest_iterations = password_generator.iterations
+
             self.total_iterations += password_generator.iterations
 
             self.password_data.append(
