@@ -7,4 +7,4 @@
 * Install matplotlib using `pip install matplotlib`
 * Tune settings in constants.py to your preference
 * Run `py main.py` in the repo folder
-* Visit passwords.txt to see the results
+* Visit passwords.txt to see the results (ensure the graphs have been closed)
