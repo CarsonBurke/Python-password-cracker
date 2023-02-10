@@ -4,12 +4,16 @@ from constants import *
 from password_data import PasswordData
 from password_generator import PasswordGenerator
 import json
+import matplotlib
+import matplotlib.pyplot as plt
+import numpy as np
 
 class Manager:
 
     password_generators = []
     password_data = []
     total_iterations = 0
+    avg_iterations_over_time = []
     avg_iterations = 0
     successful_cracks = 0
     fastest_iterations = float('inf')
@@ -44,6 +48,24 @@ class Manager:
 
         return msg
 
+    def visualize(self):
+
+        x_points = []
+
+        i = 0
+        while i < password_tests:
+            x_points.append(i)
+
+            i += 1
+
+        plt.plot(np.array(x_points), np.array(self.avg_iterations_over_time))
+
+        plt.title("Avg iterations by simulation")
+        plt.xlabel("Simulations")
+        plt.ylabel("Avg iterations")
+
+        plt.show()
+
     def run(self):
 
         if os.path.exists(passwordsFilePath):
@@ -67,11 +89,12 @@ class Manager:
 
                 if password_generator.iterations < self.fastest_iterations:
                     self.fastest_iterations = password_generator.iterations
-                    
+
                 if password_generator.iterations > self.slowest_iterations:
                     self.slowest_iterations = password_generator.iterations
 
             self.total_iterations += password_generator.iterations
+            self.avg_iterations_over_time.append(self.total_iterations / i)
 
             self.password_data.append(
                 PasswordData(
@@ -88,6 +111,8 @@ class Manager:
 
         self.passwordsFile.write('\n')
         self.passwordsFile.write('Simulation results: \n')
+
+        self.visualize()
 
         for data in self.password_data:
 
