@@ -50,15 +50,7 @@ class Manager:
 
     def visualize(self):
 
-        x_points = []
-
-        i = 0
-        while i < password_tests:
-            x_points.append(i)
-
-            i += 1
-
-        plt.plot(np.array(x_points), np.array(self.avg_iterations_over_time))
+        plt.plot(np.array(self.avg_iterations_over_time))
 
         plt.title("Avg iterations by simulation")
         plt.xlabel("Simulations")
