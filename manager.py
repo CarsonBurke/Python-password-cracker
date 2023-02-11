@@ -104,13 +104,13 @@ class Manager:
         self.passwordsFile.write('\n')
         self.passwordsFile.write('Simulation results: \n')
 
-        self.visualize()
-
         for data in self.password_data:
 
             self.passwordsFile.write(repr(data))
             self.passwordsFile.write('\n')
 
         self.passwordsFile.close()
+
+        self.visualize()
 
 manager = Manager()
